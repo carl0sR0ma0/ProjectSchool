@@ -1,4 +1,4 @@
-# project_school
+# VUE Project School - For Udemy Course
 
 ## Project setup
 ```
