@@ -1,7 +1,14 @@
 <template>
   <div>
-    <Titulo text="Alunos" />
-    <div>
+    <Titulo
+      :text="
+        professorId != undefined
+          ? 'Professor: ' + professor.nome
+          : 'Todos os Alunos'
+      "
+      :btnVoltar="true"
+    />
+    <div v-if="professorId != undefined">
       <input
         type="text"
         placeholder="Nome do Aluno"
@@ -13,15 +20,21 @@
 
     <table>
       <thead>
-        <th>Mat</th>
+        <th>Mat.</th>
         <th>Nome</th>
         <th>Opções</th>
       </thead>
       <tbody v-if="alunos.length">
         <tr v-for="(aluno, index) in alunos" :key="index">
-          <td>{{ aluno.id }}</td>
-          <td>{{ aluno.nome }} {{ aluno.sobrenome }}</td>
-          <td>
+          <td class="colPequeno">{{ aluno.id }}</td>
+          <router-link
+            :to="`/alunoDetalhe/${aluno.id}`"
+            tag="td"
+            style="cursor: pointer"
+          >
+            {{ aluno.nome }} {{ aluno.sobrenome }}
+          </router-link>
+          <td class="colPequeno">
             <button class="btn btnDanger" @click="remove(aluno)">
               Remover
             </button>
@@ -44,15 +57,25 @@ export default {
   data() {
     return {
       titulo: "Aluno",
+      professorId: this.$route.params.prof_id,
+      professor: {},
       nome: "",
       alunos: [],
     };
   },
   created() {
-    this.$http
-      .get("http://localhost:3000/alunos")
-      .then((res) => res.json())
-      .then((alunos) => (this.alunos = alunos));
+    if (this.professorId) {
+      this.carregarProfessor();
+      this.$http
+        .get("http://localhost:3000/alunos?professor.id=" + this.professorId)
+        .then((res) => res.json())
+        .then((alunos) => (this.alunos = alunos));
+    } else {
+      this.$http
+        .get("http://localhost:3000/alunos")
+        .then((res) => res.json())
+        .then((alunos) => (this.alunos = alunos));
+    }
   },
   props: {},
   methods: {
@@ -60,6 +83,10 @@ export default {
       let _aluno = {
         nome: this.nome,
         sobrenome: "",
+        professor: {
+          id: this.professor.id,
+          nome: this.professor.nome,
+        },
       };
 
       this.$http
@@ -76,12 +103,21 @@ export default {
         this.alunos.splice(indice, 1);
       });
     },
+    carregarProfessor() {
+      this.$http
+        .get("http://localhost:3000/professores/" + this.professorId)
+        .then((res) => res.json())
+        .then((professor) => {
+          this.professor = professor;
+        });
+    },
   },
 };
 </script>
 
 <style scoped>
 input {
+  width: calc(100% - 195px);
   border: 0;
   padding: 20px;
   font-size: 1.3em;
@@ -91,6 +127,7 @@ input {
 }
 
 .btnInput {
+  width: 150px;
   border: 0px;
   padding: 20px;
   font-size: 1.3em;
