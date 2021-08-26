@@ -30,7 +30,7 @@ namespace ProjectSchool_API.Controllers
       }
     }
     [HttpGet("{alunoId}")]
-    public async Task<ActionResult> GetByAlunoId(int alunoId)
+    public async Task<IActionResult> GetByAlunoId(int alunoId)
     {
       try
       {
@@ -43,7 +43,7 @@ namespace ProjectSchool_API.Controllers
       }
     }
     [HttpGet("ByProfessor/{professorId}")]
-    public async Task<ActionResult> GetByProfessorId(int professorId)
+    public async Task<IActionResult> GetByProfessorId(int professorId)
     {
       try
       {
@@ -73,7 +73,7 @@ namespace ProjectSchool_API.Controllers
       return BadRequest();
     }
     [HttpPut("{alunoId}")]
-    public async Task<ActionResult> Put(int alunoId, Aluno model)
+    public async Task<IActionResult> Put(int alunoId, Aluno model)
     {
       try
       {
@@ -94,7 +94,7 @@ namespace ProjectSchool_API.Controllers
       return BadRequest();
     }
     [HttpDelete("{alunoId}")]
-    public async Task<ActionResult> Delete(int alunoId)
+    public async Task<IActionResult> Delete(int alunoId)
     {
       try
       {
