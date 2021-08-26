@@ -26,7 +26,7 @@ export default new Router({
     },
     {
       path: "/alunos/:prof_id",
-      name: "Alunos",
+      name: "AlunosPorProfessor",
       component: Alunos,
     },
     {

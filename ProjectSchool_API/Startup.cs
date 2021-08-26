@@ -41,6 +41,8 @@ namespace ProjectSchool_API
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectSchool_API", Version = "v1" });
       });
       services.AddScoped<IRepository, Repository>();
+
+      services.AddCors();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +56,8 @@ namespace ProjectSchool_API
       }
 
       // app.UseHttpsRedirection();
+
+      app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
       app.UseRouting();
 
