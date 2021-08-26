@@ -16,13 +16,13 @@ namespace ProjectSchool_API.Controllers
       this._repo = repo;
     }
 
-
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
       try
       {
-        return Ok();
+        var result = await _repo.GetAllProfessoresAsync(true);
+        return Ok(result);
       }
       catch (System.Exception)
       {
@@ -30,11 +30,12 @@ namespace ProjectSchool_API.Controllers
       }
     }
     [HttpGet("{professorId}")]
-    public IActionResult Get(int professorId)
+    public async Task<IActionResult> GetByProfessorId(int professorId)
     {
       try
       {
-        return Ok();
+        var result = await _repo.GetProfessorAsyncById(professorId, true);
+        return Ok(result);
       }
       catch (System.Exception)
       {
@@ -51,7 +52,6 @@ namespace ProjectSchool_API.Controllers
         {
           return Created($"/Professor/{model.Id}", model);
         }
-
       }
       catch (System.Exception)
       {
@@ -60,28 +60,45 @@ namespace ProjectSchool_API.Controllers
       return BadRequest();
     }
     [HttpPut("{professorId}")]
-    public IActionResult Put(int professorId)
+    public async Task<IActionResult> Put(int professorId, Professor model)
     {
       try
       {
-        return Ok();
+        var professor = await _repo.GetProfessorAsyncById(professorId, false);
+        if (professor == null) return NotFound();
+
+        _repo.Update(model);
+        if (await _repo.SaveChangeAsync())
+        {
+          professor = await _repo.GetProfessorAsyncById(professorId, true);
+          return Created($"/Professor/{model.Id}", professor);
+        }
       }
       catch (System.Exception)
       {
         return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de Dados Falhou");
       }
+      return BadRequest();
     }
     [HttpDelete("{professorId}")]
-    public IActionResult Delete(int professorId)
+    public async Task<IActionResult> Delete(int professorId)
     {
       try
       {
-        return Ok();
+        var professor = await _repo.GetProfessorAsyncById(professorId, false);
+        if (professor == null) return NotFound();
+
+        _repo.Delete(professor);
+        if (await _repo.SaveChangeAsync())
+        {
+          return Ok();
+        }
       }
       catch (System.Exception)
       {
         return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de Dados Falhou");
       }
+      return BadRequest();
     }
   }
 }
